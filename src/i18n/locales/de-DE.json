@@ -1,0 +1,14 @@
+{
+  "appname": "Zufällige Farbe",
+  "description": "Anwendung, mit der Sie alle X Sekunden eine Farbe oder Zahl anzeigen können",
+  "seconds": "Sekunden",
+  "gobackhome": "Startseite",
+  "color": "Farbe",
+  "number": "Nummer",
+  "minimum": "Minimum",
+  "maximum": "Maximal",
+  "error": {
+    "max": "Geben Sie eine Zahl ein, die größer als das Minimum ist",
+    "min": "Geben Sie eine Zahl ein, die unter dem Höchstwert liegt"
+  }
+}

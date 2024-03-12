@@ -1,90 +1,334 @@
+import {
+  Avatar,
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  FilledInput,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  Grid,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  OutlinedInput,
+  Typography,
+} from "@mui/material";
 import { px, viewHeight } from "csx";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { style } from "typestyle";
+import { ColorSelector } from "../components/ColorSelector";
 import { useGlobal } from "../context/GlobalProvider";
-import { Colors } from "../utils/color";
-import { h1, text } from "../utils/text";
+import { Color } from "../models/Color";
+import { LANGUAGES, Language } from "../models/Language";
+import { COLORLIST, Colors } from "../utils/color";
 
-const bodyCss = style({
-  display: "flex",
-  paddingTop: viewHeight(15),
-  justifyContent: "center",
-});
-
-const blockCss = style({
-  display: "flex",
-  flexDirection: "column",
-  gap: px(10),
-  padding: px(5),
-  textAlign: "center",
-  maxWidth: px(600),
-});
-
-const buttonCss = style({
-  backgroundColor: Colors.purple,
-  padding: px(8),
-  fontFamily: ["Montserrat", "sans-serif"].join(","),
-  color: "white",
-  border: 0,
-  fontSize: px(20),
-  fontWeight: 700,
-  textTransform: "uppercase",
-  cursor: "pointer",
-  borderRadius: px(50),
-});
-
-const inputDivCss = style({
-  fontSize: px(13),
-  fontWeight: 500,
-  fontFamily: ["Montserrat", "sans-serif"].join(","),
-  color: Colors.purple,
-  boxSizing: "border-box",
-  position: "relative",
-  cursor: "text",
-  display: "inline-flex",
-  alignItems: "center",
-  width: "100%",
-  border: "3px solid #eeeeee",
-  backgroundColor: "#fff",
-  height: px(50),
-  borderRadius: px(15),
-  textAlign: "center",
-});
-
-const inputCss = style({
-  border: "none",
-  color: "currentcolor",
-  fontSize: px(25),
-  fontWeight: 500,
-  fontFamily: ["Montserrat", "sans-serif"].join(","),
-});
+import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export const HomePage = () => {
-  const { time, setTime } = useGlobal();
+  const {
+    time,
+    setTime,
+    colors,
+    setColors,
+    language,
+    setLanguage,
+    colorMode,
+    setColorMode,
+    numberMode,
+    setNumberMode,
+    minNumber,
+    setMinNumber,
+    maxNumber,
+    setMaxNumber,
+  } = useGlobal();
+  const { t } = useTranslation();
   const navigate = useNavigate();
+  const colorsCode = useMemo(() => colors.map((el) => el.code), [colors]);
+  const [anchor, setAnchor] = useState<null | HTMLElement>(null);
 
-  const launch = () => {
-    navigate(`/play`);
+  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchor(event.currentTarget);
   };
 
+  const selectLanguage = (language: Language) => {
+    setLanguage(language);
+    handleCloseMenu();
+  };
+
+  const handleCloseMenu = () => {
+    setAnchor(null);
+  };
+
+  const launch = () => {
+    if (!isErrorMax) navigate(`/play`);
+  };
+
+  const onSelectColor = (value: Color) => {
+    const codes = colors.map((el) => el.code);
+    const isAdd = codes.includes(value.code);
+    const filterArray = [...colors].filter((el) => el.code !== value.code);
+    setColors(
+      isAdd
+        ? filterArray.length > 0
+          ? filterArray
+          : [...colors]
+        : [...colors, value]
+    );
+  };
+
+  const isErrorMax =
+    numberMode &&
+    (minNumber === undefined ||
+      maxNumber === undefined ||
+      (minNumber && maxNumber && minNumber > maxNumber))
+      ? true
+      : false;
+
   return (
-    <div className={bodyCss}>
-      <div className={blockCss}>
-        <p className={h1}>Random Color</p>
-        <p className={text}>Délai entre chaque couleur (en secondes) :</p>
-        <div className={inputDivCss}>
-          <input
-            name="age"
+    <Container
+      maxWidth="sm"
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: viewHeight(100),
+      }}
+    >
+      <Box sx={{ position: "absolute", top: 10, right: 10 }}>
+        <IconButton
+          aria-label="language"
+          color="inherit"
+          onClick={handleOpenMenu}
+        >
+          <Avatar src={language.icon} />
+        </IconButton>
+        <Menu
+          sx={{ mt: "50px" }}
+          id="menu-appbar"
+          anchorEl={anchor}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={Boolean(anchor)}
+          onClose={handleCloseMenu}
+        >
+          {LANGUAGES.map((language) => (
+            <MenuItem
+              key={language.iso}
+              onClick={() => selectLanguage(language)}
+              sx={{ pl: 1, pr: 1 }}
+            >
+              <ListItemIcon>
+                <Avatar
+                  src={language.icon}
+                  sx={{ width: 32, height: 32, mr: 1 }}
+                />
+              </ListItemIcon>
+              <ListItemText>
+                <Typography variant="h6">{language.name}</Typography>
+              </ListItemText>
+            </MenuItem>
+          ))}
+        </Menu>
+      </Box>
+      <Grid container spacing={1} sx={{ mt: 1, mb: 1 }}>
+        <Grid item xs={12} sx={{ textAlign: "center" }}>
+          <Typography variant="h1">{t("appname")}</Typography>
+        </Grid>
+        <Grid item xs={12} sx={{ textAlign: "center" }}>
+          <Typography variant="h6">{t("description")}</Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <OutlinedInput
+            id="time"
+            fullWidth
             type="number"
+            endAdornment={
+              <InputAdornment position="end" sx={{ color: "inherit" }}>
+                <Typography variant="h6">{t("seconds")}</Typography>
+              </InputAdornment>
+            }
+            sx={{ backgroundColor: "white" }}
             value={time}
-            className={inputCss}
-            onChange={(event) => setTime(Number(event.target.value))}
+            onChange={(event) =>
+              setTime(
+                event.target.value !== ""
+                  ? Number(event.target.value)
+                  : undefined
+              )
+            }
           />
-        </div>
-        <button className={buttonCss} onClick={() => launch()}>
-          Start
-        </button>
-      </div>
-    </div>
+        </Grid>
+        <Grid item xs={12}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                icon={
+                  <CancelIcon
+                    sx={{
+                      fontSize: 35,
+                      color: Colors.red2,
+                    }}
+                  />
+                }
+                checkedIcon={
+                  <CheckCircleIcon
+                    sx={{
+                      fontSize: 35,
+                      color: Colors.green2,
+                    }}
+                  />
+                }
+                checked={colorMode}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setColorMode(event.target.checked)
+                }
+              />
+            }
+            label={
+              <Typography
+                variant="h4"
+                sx={{
+                  color: colorMode ? Colors.green2 : Colors.red2,
+                }}
+              >
+                {t("color")}
+              </Typography>
+            }
+          />
+          {colorMode && (
+            <Grid container spacing={2} justifyContent="center">
+              {COLORLIST.map((el) => (
+                <Grid item key={el.code}>
+                  <ColorSelector
+                    color={el}
+                    selected={colorsCode.includes(el.code)}
+                    onSelect={() => onSelectColor(el)}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </Grid>
+        <Grid item xs={12}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                icon={
+                  <CancelIcon
+                    sx={{
+                      fontSize: 35,
+                      color: Colors.red2,
+                    }}
+                  />
+                }
+                checkedIcon={
+                  <CheckCircleIcon
+                    sx={{
+                      fontSize: 35,
+                      color: Colors.green2,
+                    }}
+                  />
+                }
+                checked={numberMode}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setNumberMode(event.target.checked)
+                }
+              />
+            }
+            label={
+              <Typography
+                variant="h4"
+                sx={{
+                  color: numberMode ? Colors.green2 : Colors.red2,
+                }}
+              >
+                {t("number")}
+              </Typography>
+            }
+          />
+          {numberMode && (
+            <Grid container spacing={2} justifyContent="center">
+              <Grid item xs={6}>
+                <FormControl variant="filled" error={isErrorMax} fullWidth>
+                  <InputLabel htmlFor="minNumber">{t("minimum")}</InputLabel>
+                  <FilledInput
+                    id="minNumber"
+                    type="number"
+                    sx={{ backgroundColor: "white !important" }}
+                    value={minNumber}
+                    onChange={(event) =>
+                      setMinNumber(
+                        event.target.value !== ""
+                          ? Number(event.target.value)
+                          : undefined
+                      )
+                    }
+                  />
+                  {isErrorMax && (
+                    <FormHelperText id="minNumber">
+                      {t("error.min")}
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl variant="filled" error={isErrorMax} fullWidth>
+                  <InputLabel htmlFor="maxNumber">{t("maximum")}</InputLabel>
+                  <FilledInput
+                    id="maxNumber"
+                    fullWidth
+                    type="number"
+                    sx={{
+                      backgroundColor: "white !important",
+                    }}
+                    value={maxNumber}
+                    onChange={(event) => {
+                      const value =
+                        event.target.value !== ""
+                          ? Number(event.target.value)
+                          : undefined;
+                      setMaxNumber(value);
+                    }}
+                  />
+                  {isErrorMax && (
+                    <FormHelperText id="maxNumber">
+                      {t("error.max")}
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+            </Grid>
+          )}
+        </Grid>
+        <Grid item xs={12}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ borderRadius: px(50), p: 2 }}
+            onClick={() => launch()}
+          >
+            <Typography variant="h2" sx={{ fontSize: 30 }}>
+              Start
+            </Typography>
+          </Button>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };

@@ -1,0 +1,14 @@
+{
+  "appname": "Random Color",
+  "description": "Application allowing you to display a color or number every X seconds",
+  "seconds": "seconds",
+  "gobackhome": "Home Page",
+  "color": "Color",
+  "number": "Number",
+  "minimum": "Minimum",
+  "maximum": "Maximum",
+  "error": {
+    "max": "Enter a number greater than the minimum",
+    "min": "Enter a number less than the maximum"
+  }
+}

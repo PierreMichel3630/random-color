@@ -1,0 +1,14 @@
+{
+  "appname": "Couleur Aléatoire",
+  "description": "Application permettant d'afficher une couleur ou un chiffre tous les X secondes",
+  "seconds": "secondes",
+  "gobackhome": "Retour Accueil",
+  "color": "Couleur",
+  "number": "Chiffre",
+  "minimum": "Minimum",
+  "maximum": "Maximum",
+  "error": {
+    "max": "Saisir un chiffre supérieur au minimum",
+    "min": "Saisir un chiffre inférieur au maximum"
+  }
+}

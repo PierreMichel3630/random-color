@@ -1,16 +1,14 @@
 import { Box, Typography } from "@mui/material";
 import { px } from "csx";
-import { Color } from "../models/Color";
+import { Colors } from "../utils/color";
 
 interface Props {
-  index: number;
-  color: Color;
+  value: number;
 }
 
-export const ColorRecap = ({ index, color }: Props) => (
+export const NumberRecap = ({ value }: Props) => (
   <Box
     sx={{
-      backgroundColor: color.code,
       minWidth: px(60),
       height: px(50),
       borderRadius: px(10),
@@ -18,10 +16,12 @@ export const ColorRecap = ({ index, color }: Props) => (
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
+      border: "1px solid black",
+      backgroundColor: Colors.black,
     }}
   >
     <Typography variant="h2" color="white">
-      {index}
+      {value}
     </Typography>
   </Box>
 );

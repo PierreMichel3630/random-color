@@ -1,0 +1,14 @@
+{
+  "appname": "Color aleatorio",
+  "description": "Aplicación que te permite mostrar un color o número cada X segundos",
+  "seconds": "segundos",
+  "gobackhome": "pagina de inicio",
+  "color": "Color",
+  "number": "Número",
+  "minimum": "Mínimo",
+  "maximum": "Máximo",
+  "error": {
+    "max": "Introduzca un número mayor que el mínimo",
+    "min": "Introduzca un número menor que el máximo"
+  }
+}

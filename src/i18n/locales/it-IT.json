@@ -1,0 +1,14 @@
+{
+  "appname": "Colore casuale",
+  "description": "Applicazione che ti consente di visualizzare un colore o un numero ogni X secondi",
+  "seconds": "secondi",
+  "gobackhome": "pagina iniziale",
+  "color": "Colore",
+  "number": "Numero",
+  "minimum": "Minimo",
+  "maximum": "Massimo",
+  "error": {
+    "max": "Immettere un numero maggiore del minimo",
+    "min": "Inserisci un numero inferiore al massimo"
+  }
+}
